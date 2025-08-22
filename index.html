@@ -1,0 +1,49 @@
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  // Pehle ke messages dikhao
+  socket.on('load messages', (msgs) => {
+    msgs.forEach(msg => {
+      const div = document.createElement('p');
+      div.innerHTML = `<strong>${msg.text}</strong> <small>(${msg.time})</small>`;
+      div.style.backgroundColor = '#DCF8C6';
+      div.style.padding = '8px';
+      div.style.margin = '5px 0';
+      div.style.borderRadius = '8px';
+      div.style.display = 'inline-block';
+      document.getElementById('messages').appendChild(div);
+    });
+    const m = document.getElementById('messages');
+    m.scrollTop = m.scrollHeight;
+  });
+
+  // Naya message aaye toh dikhao
+  socket.on('chat message', (msg) => {
+    const div = document.createElement('p');
+    div.innerHTML = `<strong>${msg.text}</strong> <small>(${msg.time})</small>`;
+    div.style.backgroundColor = '#DCF8C6';
+    div.style.padding = '8px';
+    div.style.margin = '5px 0';
+    div.style.borderRadius = '8px';
+    div.style.display = 'inline-block';
+    document.getElementById('messages').appendChild(div);
+
+    const m = document.getElementById('messages');
+    m.scrollTop = m.scrollHeight;
+  });
+
+  // Message bhejne ka function
+  function sendMessage() {
+    const input = document.getElementById('message');
+    if (input.value.trim() !== '') {
+      socket.emit('chat message', input.value);
+      input.value = '';
+    }
+  }
+
+  // Enter se bhi bhejo
+  document.getElementById('message').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+</script>
